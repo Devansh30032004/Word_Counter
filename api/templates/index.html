@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        .input-group {
+            text-align: center;
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .tables {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .table-container {
+            width: 45%;
+        }
+        .table-title {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .meanings {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .meaning-item {
+            margin-bottom: 10px;
+        }
+        .meaning-item strong {
+            color: #4CAF50;
+        }
+        /* Spinner styling */
+        .spinner {
+            display: none; /* Hide by default */
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        async function fetchWordFrequency() {
+            const url = document.getElementById('url').value;
+
+            // Show the spinner and clear previous results
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
+            const tableAll = document.getElementById('result_all');
+            const tableFiltered = document.getElementById('result_filtered');
+            const meaningsContainer = document.getElementById('meanings');
+            tableAll.innerHTML = '';
+            tableFiltered.innerHTML = '';
+            meaningsContainer.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/word-frequency/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+                const data = await response.json();
+
+                if (data.top_words_all && data.top_words_filtered && data.meanings) {
+                    // Display the table for all words
+                    tableAll.innerHTML = `<tr><th>Word</th><th>Frequency</th></tr>`;
+                    data.top_words_all.forEach(({ word, count }) => {
+                        const row = `<tr><td>${word}</td><td>${count}</td></tr>`;
+                        tableAll.innerHTML += row;
+                    });
+
+                    // Display the table for filtered words (without stopwords)
+                    tableFiltered.innerHTML = `<tr><th>Word</th><th>Frequency</th></tr>`;
+                    data.top_words_filtered.forEach(({ word, count }) => {
+                        const row = `<tr><td>${word}</td><td>${count}</td></tr>`;
+                        tableFiltered.innerHTML += row;
+                    });
+
+                    // Display the meanings for the top filtered words
+                    meaningsContainer.innerHTML = '<h3>Meanings of Top 10 Frequent Words (Excluding Common Words)</h3>';
+                    for (const [word, meaning] of Object.entries(data.meanings)) {
+                        meaningsContainer.innerHTML += `<div class="meaning-item"><strong>${word}:</strong> ${meaning}</div>`;
+                    }
+                } else if (data.error) {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Error fetching data. Please try again.');
+            } finally {
+                // Hide the spinner
+                spinner.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Word Counter</h1>
+    <div class="container">
+        <div class="input-group">
+            <input type="text" id="url" placeholder="Enter URL" />
+            <button onclick="fetchWordFrequency()">Submit</button>
+        </div>
+        <div class="spinner" id="loadingSpinner"></div>
+        <div class="tables">
+            <!-- Table container for all words including common words -->
+            <div class="table-container">
+                <div class="table-title">Top 10 Most Frequent Words (Including Common Words)</div>
+                <table id="result_all">
+                    <tr><th>Word</th><th>Frequency</th></tr>
+                </table>
+            </div>
+            <!-- Table container for filtered words (excluding common words) -->
+            <div class="table-container">
+                <div class="table-title">Top 10 Most Frequent Words (Excluding Common Words)</div>
+                <table id="result_filtered">
+                    <tr><th>Word</th><th>Frequency</th></tr>
+                </table>
+            </div>
+        </div>
+        <!-- Section for meanings of top filtered words -->
+        <div id="meanings" class="meanings"></div>
+    </div>
+</body>
+</html>
