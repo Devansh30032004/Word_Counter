@@ -1,6 +1,6 @@
-# Count_IT: Intelligent Word Frequency Analyzer 🔍
+# Word Counter: Intelligent Word Frequency Analyzer 🔍
 
-**Count_IT** is a web-based application for analyzing word frequency from any webpage URL. It delivers two customizable top-10 word lists: one with all words and another excluding common words, enhancing insights by focusing on impactful terms. The app also fetches meanings for the most frequent unique words and presents results in a clean, professional table format. Perfect for writers, content strategists, and language enthusiasts seeking deeper text analysis in a user-friendly design!
+**Word Counter** is a web-based application for analyzing word frequency from any webpage URL. It delivers two customizable top-10 word lists: one with all words and another excluding common words, enhancing insights by focusing on impactful terms. The app also fetches meanings for the most frequent unique words and presents results in a clean, professional table format. Perfect for writers, content strategists, and language enthusiasts seeking deeper text analysis in a user-friendly design!
 
 ## Features:
 - 📊 **Top-10 Word Frequency Tables** (With & Without Common Words)
@@ -15,8 +15,8 @@
 ## Installation:
 1. Clone the repository:
     ```bash
-    git clone https://github.com/YourUsername/Count_IT.git
-    cd Count_IT
+    git clone https://github.com/YourUsername/Word Counter.git
+    cd Word Counter
     ```
 
 2. Install the required dependencies:
