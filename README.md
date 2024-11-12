@@ -39,6 +39,11 @@
    - **Top 10 Most Frequent Words (Excluding Common Words)**
 4. Meaning of the top filtered words is displayed below the tables.
 
+## Walk-through Video:
+https://www.loom.com/share/296b5ce029a5491988d5ee24b8124b2c?sid=17cfe285-026b-469c-b747-9761f4afb2b9
+
+
+
 ---
 
 Feel free to contribute and create issues for any bugs or enhancements!
